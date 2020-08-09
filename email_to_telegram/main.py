@@ -18,6 +18,9 @@ try:
     raise RuntimeError
 except RuntimeError:
     log.exception("Error!")
+logging.debug("This is a debug message")
+logging.info("Informational message")
+logging.error("An error has happened!")
  
  
 def get_emails(
@@ -35,10 +38,10 @@ def get_emails(
    """
    
     #try:
-    os.chdir("/home/m.kostromin/INBOX")
+    os.chdir("/home/m.kostromin/send_tickets/INBOX")
     #except FileNotFoundError:
     #os.mkdir("INBOX")
-    os.chdir("/home/m.kostromin/INBOX")
+    #os.chdir("/home/m.kostromin/send_tickets/INBOX")
  
     with IMAPClient(host) as server:
         server.login(username, password)
@@ -80,7 +83,7 @@ def get_emails(
  
  
 def send_emails_telegram(bot: TeleBot, chat_id: str):
-    os.chdir("INBOX")  # Переход в папку с сохраненными письмами
+    os.chdir("/home/m.kostromin/send_tickets/INBOX")  # Переход в папку с сохраненными письмами
     for mail in os.listdir("."):  # Получаем список папок, в которых лежит само письмо и его влложения
         os.chdir(mail)  # Переходим в папку с письмом
  
@@ -124,7 +127,7 @@ def split(text: str, max_message_length: int = 4091) -> list:
 if __name__ == "__main__":
     # Инициализация и чтение конфигурации из файла config.ini
     config = configparser.ConfigParser()
-    config.read("/home/m.kostromin/send_tickets/config.ini")
+    config.read("config.ini")
     host = config.get("email", "host")
     login = config.get("email", "login")
     password = config.get("email", "password")
@@ -135,6 +138,6 @@ if __name__ == "__main__":
     # Получение непрочитанных писем
     last_uid = get_emails(host, login, password, last_uid=last_uid)
     config.set("email", "last_uid", str(last_uid))
-    config.write(open("/home/m.kostromin/send_tickets/config.ini", "w"))
+    config.write(open("config.ini", "w"))
     # Отправка писем в Telegram
     send_emails_telegram(bot, chat)

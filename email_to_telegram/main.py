@@ -101,8 +101,8 @@ def send_emails_telegram(bot: TeleBot, chat_id: str):
  
         if os.path.exists("attachments"):  # Если есть вложения в письме, то отправляем и их.
             for file in os.listdir("attachments"):
-                bot.send_document(chat_id, open(file, "rb"))
-                os.remove(file)  # Удаляем отправленный файл
+                bot.send_document(chat_id, open("attachments/" + file, "rb"))
+                os.remove("attachments/" + file)  # Удаляем отправленный файл
             os.rmdir("attachments")  # Удаляем пустую папку
  
         os.chdir("../")  # Выходим из папки с письмом
@@ -127,7 +127,7 @@ def split(text: str, max_message_length: int = 4091) -> list:
 if __name__ == "__main__":
     # Инициализация и чтение конфигурации из файла config.ini
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    config.read("/home/m.kostromin/send_tickets/config.ini")
     host = config.get("email", "host")
     login = config.get("email", "login")
     password = config.get("email", "password")
